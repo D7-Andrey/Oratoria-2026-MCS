@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oratoria 2026 MCS - Sistema Oficial de Evaluación</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        :root { 
+            --bg-deep: #08101a; 
+            --bg-panel: #0d1b2a;
+            --bg-card: rgba(13, 27, 42, 0.9);
+            --text-main: #ffffff; 
+            --text-desc: #d0e8f2;
+            --neon-cyan: #00e5ff; 
+            --neon-green: #00ff9d;
+            --neon-glow: rgba(0, 229, 255, 0.45);
+            --green-glow: rgba(0, 255, 157, 0.35);
+            --card-border: rgba(0, 229, 255, 0.25);
+        }
+        
+        * { box-sizing: border-box; }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-deep);
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 229, 255, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(0, 255, 157, 0.06) 0%, transparent 45%),
+                repeating-linear-gradient(45deg, rgba(0, 229, 255, 0.02) 0px, rgba(0, 229, 255, 0.02) 1px, transparent 1px, transparent 6px);
+            color: var(--text-main);
+            padding: 30px 15px 100px 15px; 
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-svg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.05;
+            pointer-events: none;
+        }
+
+        .container { 
+            max-width: 1120px; 
+            margin: auto; 
+            background: var(--bg-card); 
+            padding: 35px; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 45px rgba(0,0,0,0.85), 0 0 25px rgba(0, 229, 255, 0.12);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(16px);
+            position: relative;
+        }
+
+        /* Emblema SVG y Encabezado */
+        .emblem-container { text-align: center; margin-bottom: -5px; }
+        .svg-emblem { width: 85px; height: 85px; filter: drop-shadow(0 0 10px var(--neon-glow)); }
+        
+        @keyframes pulseWave {
+            0% { r: 16; opacity: 0.85; stroke-width: 2.5; }
+            100% { r: 44; opacity: 0; stroke-width: 0.5; }
+        }
+        .wave1 { animation: pulseWave 2.4s infinite ease-out; }
+        .wave2 { animation: pulseWave 2.4s infinite ease-out 1.2s; }
+        .mic-part { fill: none; stroke: var(--neon-cyan); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;}
+        .mic-head { fill: rgba(0,229,255,0.15); stroke: var(--neon-cyan); stroke-width: 2.5; }
+
+        h1 { 
+            font-family: 'Montserrat', sans-serif;
+            color: var(--neon-cyan); 
+            text-align: center; 
+            font-weight: 800;
+            font-size: 2.2em;
+            margin: 10px 0 5px 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px var(--neon-glow);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            color: #9ec5db;
+            letter-spacing: 1.5px;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+            text-transform: uppercase;
+        }
+
+        /* Navegación de Pestañas */
+        .tabs-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+            padding-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: rgba(8, 16, 26, 0.7);
+            color: #b0c4de;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 12px 24px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--neon-cyan);
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            color: var(--bg-deep);
+            background: var(--neon-cyan);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px var(--neon-glow);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.35s ease-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Selectores Superiores */
+        .header-info { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 25px; 
+            margin-bottom: 35px; 
+            background: rgba(8, 16, 26, 0.65);
+            padding: 22px;
+            border-radius: 14px;
+            border: 1px solid rgba(0, 229, 255, 0.15);
+        }
+        
+        label { 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: 700; 
+            color: var(--neon-cyan); 
+            margin-bottom: 8px; 
+            display: block; 
+            font-size: 0.95em;
+            letter-spacing: 0.5px; 
+        }
+        
+        select { 
+            width: 100%; 
+            padding: 14px; 
+            background: #050b12;
+            border: 1px solid var(--card-border); 
+            border-radius: 10px; 
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 1em;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        select:focus { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-glow); }
+        select optgroup { color: var(--neon-cyan); font-weight: 700; background: #050b12; }
+        select option { color: #ffffff; background: #0d1b2a; padding: 10px; }
+
+        /* Filas de Criterios */
+        .crit-row { 
+            margin-bottom: 24px; 
+            background: rgba(5, 11, 18, 0.55); 
+            padding: 22px; 
+            border-radius: 15px; 
+            border: 1px solid rgba(0, 229, 255, 0.12); 
+            transition: all 0.3s ease; 
+        }
+        .crit-row:hover { border-color: rgba(0, 229, 255, 0.35); }
+        
+        .crit-title { 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: 700; 
+            color: #ffffff; 
+            font-size: 1.18em; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px; 
+            text-shadow: 0 0 8px rgba(0, 229, 255, 0.3); 
+        }
+
+        .crit-badge {
+            font-size: 0.75em;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--neon-cyan);
+            border: 1px solid rgba(0, 229, 255, 0.25);
+        }
+
+        .opts-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+        
+        /* Casillas Iluminadas */
+        .opt-item { 
+            display: flex; 
+            flex-direction: column; 
+            background: rgba(13, 27, 42, 0.75); 
+            padding: 16px 14px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            border: 1px solid rgba(0, 229, 255, 0.12); 
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .opt-item:hover { 
+            transform: translateY(-4px); 
+            border-color: var(--neon-cyan); 
+            background: rgba(0, 229, 255, 0.1); 
+            box-shadow: 0 8px 22px rgba(0, 229, 255, 0.22), inset 0 0 12px rgba(0, 229, 255, 0.12); 
+        }
+        
+        input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+        
+        .opt-item.selected { 
+            transform: translateY(-4px); 
+            border-color: var(--neon-green); 
+            background: rgba(0, 255, 157, 0.14); 
+            box-shadow: 0 10px 25px var(--green-glow), inset 0 0 18px rgba(0, 255, 157, 0.2); 
+        }
+        
+        .opt-item.selected .opt-level { 
+            color: var(--neon-green); 
+            text-shadow: 0 0 8px var(--green-glow); 
+            border-bottom-color: var(--neon-green); 
+        }
+        
+        .opt-level { 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: 700; 
+            color: var(--neon-cyan); 
+            margin-bottom: 8px; 
+            font-size: 1em; 
+            border-bottom: 1px solid rgba(0,229,255,0.2); 
+            padding-bottom: 6px; 
+            transition: all 0.3s; 
+        }
+        
+        .opt-desc { font-size: 0.92em; color: var(--text-desc); line-height: 1.48; font-weight: 400; }
+
+        /* Barra Flotante de Progreso en Vivo */
+        .live-score-bar {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(8, 16, 26, 0.95);
+            border-top: 2px solid var(--neon-cyan);
+            padding: 12px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.7);
+        }
+
+        .live-score-info {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95em;
+            color: var(--text-desc);
+        }
+
+        .live-score-numbers {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 1.25em;
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--green-glow);
+        }
+
+        /* Botones de Acción */
+        .btn-group { display: flex; gap: 20px; margin-top: 35px; }
+        .btn-action { 
+            flex: 1; 
+            font-family: 'Montserrat', sans-serif; 
+            background: transparent; 
+            color: var(--neon-cyan); 
+            border: 2px solid var(--neon-cyan); 
+            padding: 16px 20px; 
+            border-radius: 12px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            font-size: 1.05em; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            transition: all 0.3s ease; 
+        }
+        .btn-action:hover:not(:disabled) { 
+            background: var(--neon-cyan); 
+            color: var(--bg-deep); 
+            box-shadow: 0 0 25px var(--neon-glow); 
+            transform: translateY(-2px); 
+        }
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-primary { 
+            background: rgba(0, 255, 157, 0.12); 
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: var(--neon-green);
+            color: var(--bg-deep);
+            box-shadow: 0 0 25px var(--green-glow);
+        }
+
+        /* Tabla de Resultados y Filtros */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            font-size: 0.85em;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+
+        .results-table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(5, 11, 18, 0.6);
+        }
+
+        .results-table th, .results-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.1);
+        }
+
+        .results-table th {
+            background: rgba(0, 229, 255, 0.12);
+            color: var(--neon-cyan);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        .results-table tr:hover { background: rgba(0, 229, 255, 0.05); }
+        
+        .rank-badge {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background: var(--neon-cyan);
+            color: var(--bg-deep);
+            border-radius: 50%;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+        }
+
+        .rank-1 { background: #ffd700; box-shadow: 0 0 12px rgba(255, 215, 0, 0.6); }
+        .rank-2 { background: #e0e0e0; }
+        .rank-3 { background: #cd7f32; color: #fff; }
+
+        .judge-tag {
+            display: inline-block;
+            background: rgba(0, 229, 255, 0.12);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            color: var(--text-desc);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.78em;
+            margin: 2px;
+        }
+
+        @media (max-width: 900px) { 
+            .opts-container { grid-template-columns: repeat(2, 1fr); } 
+            .header-info { grid-template-columns: 1fr; gap: 15px; } 
+            .container { padding: 20px; }
+        }
+        @media (max-width: 550px) { 
+            .opts-container { grid-template-columns: 1fr; } 
+            .btn-group { flex-direction: column; } 
+            h1 { font-size: 1.6em; }
+            .live-score-bar { flex-direction: column; gap: 5px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<svg class="bg-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+    <defs>
+        <pattern id="soundwaves" width="120" height="120" patternUnits="userSpaceOnUse" patternTransform="scale(1.8)">
+            <path d="M 0 60 Q 30 25, 60 60 T 120 60" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+            <path d="M 0 85 Q 30 50, 60 85 T 120 85" fill="none" stroke="#00ff9d" stroke-width="0.8"/>
+        </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#soundwaves)" />
+</svg>
+
+<div class="container" id="panel-principal">
+    
+    <div class="emblem-container">
+        <svg class="svg-emblem" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="40" class="mic-part wave1" fill="none" stroke="var(--neon-cyan)"/>
+            <circle cx="50" cy="40" class="mic-part wave2" fill="none" stroke="var(--neon-green)"/>
+            <rect x="40" y="15" width="20" height="35" rx="10" class="mic-head"/>
+            <path d="M 32 40 A 18 18 0 0 0 68 40" class="mic-part"/>
+            <line x1="50" y1="58" x2="50" y2="78" class="mic-part"/>
+            <line x1="35" y1="78" x2="65" y2="78" class="mic-part"/>
+        </svg>
+    </div>
+
+    <h1>Oratoria 2026 MCS</h1>
+    <div class="subtitle">Sistema Oficial de Calificación de Jurado</div>
+
+    <!-- Navegación de Pestañas -->
+    <div class="tabs-nav">
+        <button class="tab-btn active" id="btn-tab-eval" onclick="cambiarPestana('evaluacion')">Panel de Evaluación</button>
+        <button class="tab-btn" id="btn-tab-res" onclick="cambiarPestana('resultados')">Resultados en Tiempo Real</button>
+    </div>
+    
+    <!-- PESTAÑA 1: EVALUACIÓN -->
+    <div id="tab-evaluacion" class="tab-content active">
+        <div class="header-info">
+            <div>
+                <label for="juez">1. Seleccione su Nombre (Juez):</label>
+                <select id="juez" onchange="actualizarBarraVivo()">
+                    <option value="" disabled selected>Seleccione su credencial...</option>
+                    <option value="Michael Parrales">Michael Parrales — Director General</option>
+                    <option value="Elizabeth Cruz">Elizabeth Cruz — Exdirectora de Secundaria</option>
+                    <option value="Iliana López">Iliana López — Docente y Artes Escénicas</option>
+                    <option value="Mariela Reyna">Mariela Reyna — Docente en Sciences</option>
+                    <option value="José Andrés Fallas">José Andrés Fallas — 2.° Lugar Oratoria 2025</option>
+                </select>
+            </div>
+            <div>
+                <label for="estu">2. Seleccione al Estudiante Participante:</label>
+                <select id="estu" onchange="actualizarBarraVivo()">
+                    <option value="" disabled selected>Seleccione al estudiante en escena...</option>
+                    <optgroup label="Undécimo (11°)">
+                        <option value="Isabella Córdoba Fernández (11C)" data-nivel="Undécimo">Isabella Córdoba Fernández — 11C</option>
+                        <option value="María de Jesús Jiménez Piña (11C)" data-nivel="Undécimo">María de Jesús Jiménez Piña — 11C</option>
+                        <option value="Gabriel Saborío Tremiño (11C)" data-nivel="Undécimo">Gabriel Saborío Tremiño — 11C</option>
+                        <option value="Alessandro Laitano Lobo (11B)" data-nivel="Undécimo">Alessandro Laitano Lobo — 11B</option>
+                        <option value="Sebastián Barillas Jacó (11B)" data-nivel="Undécimo">Sebastián Barillas Jacó — 11B</option>
+                    </optgroup>
+                    <optgroup label="Décimo (10°)">
+                        <option value="Sofía Vargas Quirós (10A)" data-nivel="Décimo">Sofía Vargas Quirós — 10A</option>
+                    </optgroup>
+                    <optgroup label="Noveno (9°)">
+                        <option value="Alejandro Pérez Suárez (9D)" data-nivel="Noveno">Alejandro Pérez Suárez — 9D</option>
+                    </optgroup>
+                    <optgroup label="Octavo (8°)">
+                        <option value="Felisha González Martín (8C)" data-nivel="Octavo">Felisha González Martín — 8C</option>
+                    </optgroup>
+                    <optgroup label="Sétimo (7°)">
+                        <option value="Alexander Lin Morales (7A)" data-nivel="Sétimo">Alexander Lin Morales — 7A</option>
+                        <option value="Isabella Madrid Arguedas (7A)" data-nivel="Sétimo">Isabella Madrid Arguedas — 7A</option>
+                        <option value="Isabella Cisne Acuña (7B)" data-nivel="Sétimo">Isabella Cisne Acuña — 7B</option>
+                        <option value="Santiago Chaves Aguilar (7B)" data-nivel="Sétimo">Santiago Chaves Aguilar — 7B</option>
+                        <option value="Emily Zeledón Quirós (7C)" data-nivel="Sétimo">Emily Zeledón Quirós — 7C</option>
+                        <option value="Nazareth Méndez Solano (7C)" data-nivel="Sétimo">Nazareth Méndez Solano — 7C</option>
+                    </optgroup>
+                </select>
+            </div>
+        </div>
+
+        <div id="rubrica"></div>
+
+        <div class="btn-group">
+            <button class="btn-action btn-primary" id="btn-enviar" onclick="procesarVoto()">Enviar Calificación Oficial</button>
+            <button class="btn-action" onclick="exportarPDF()">Descargar Comprobante (PDF)</button>
+        </div>
+    </div>
+
+    <!-- PESTAÑA 2: RESULTADOS -->
+    <div id="tab-resultados" class="tab-content">
+        <div class="results-header">
+            <div>
+                <h2 style="color: var(--neon-cyan); font-family: 'Montserrat', sans-serif; margin: 0 0 5px 0;">Tabla General de Posiciones</h2>
+                <div id="estado-conexion" class="status-pill">Conectado a Google Sheets</div>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <select id="filtro-nivel" onchange="renderizarTabla()" style="width: auto; padding: 10px 15px;">
+                    <option value="Todos">Todos los Niveles</option>
+                    <option value="Undécimo">Undécimo (11°)</option>
+                    <option value="Décimo">Décimo (10°)</option>
+                    <option value="Noveno">Noveno (9°)</option>
+                    <option value="Octavo">Octavo (8°)</option>
+                    <option value="Sétimo">Sétimo (7°)</option>
+                </select>
+                <button class="btn-action" onclick="sincronizarDesdeSheets()" style="padding: 10px 18px; font-size: 0.85em; flex: none;">Actualizar Ahora</button>
+            </div>
+        </div>
+        
+        <div class="results-table-wrapper">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Pos.</th>
+                        <th>Participante</th>
+                        <th>Nivel</th>
+                        <th>Jueces Registrados</th>
+                        <th>Pts. Acumulados</th>
+                        <th>Promedio Base 100</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-body">
+                    <tr><td colspan="6" style="text-align:center;">Cargando datos...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Barra Inferior de Puntuación en Vivo -->
+<div class="live-score-bar" id="barra-vivo">
+    <div class="live-score-info" id="info-evaluando">Seleccione juez y estudiante para comenzar</div>
+    <div class="live-score-numbers" id="puntaje-vivo">0 / 40 pts (0%) — 0/10 criterios</div>
+</div>
+
+<script>
+    // URL OFICIAL DE TU BASE DE DATOS EN GOOGLE APPS SCRIPT YA INTEGRADA
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxM2XtmXgfd6Gzcd3ZyCfkacTiQoMoIR5D6kjZkuc5CPx1px7AksYbyPDCRzsW1EK4e/exec";
+
+    const items = [
+        { t: "1. Dominio del tema", e: "Seguridad total, no depende de fichas, comprende a profundidad el fondo.", mb: "Demuestra gran dominio, consulta notas de forma muy esporádica.", b: "Explica bien la mayoría del tiempo, pero consulta notas con frecuencia.", r: "Lee constantemente, denota falta de preparación o memorización mecánica." },
+        { t: "2. Tono de voz", e: "Volumen adecuado e impecable modulación estratégica (énfasis).", mb: "Buen volumen en general y realiza ligeros cambios de entonación.", b: "Volumen correcto, pero voz plana o monótona.", r: "No se escucha con claridad o habla demasiado rápido/bajo." },
+        { t: "3. Postura corporal", e: "Seguridad total; ademanes y gestos naturales que refuerzan el discurso.", mb: "Postura adecuada y realiza algunos ademanes que acompañan el texto.", b: "Mantiene un solo sitio, con postura cerrada o muestra nerviosismo evidente.", r: "Totalmente rígido, da la espalda al público o muestra desinterés." },
+        { t: "4. Contacto visual", e: "Mira a todo el auditorio con absoluta naturalidad y seguridad.", mb: "Realiza barridos visuales, mirando a la mayor parte del auditorio.", b: "Mira principalmente al docente o a un grupo muy pequeño y específico.", r: "Evita el contacto por completo, mira fijamente al suelo o al techo." },
+        { t: "5. Dicción", e: "Claridad absoluta en la pronunciación, sin muletillas ni titubeos.", mb: "Se expresa con claridad, utilizando muletillas de forma muy aislada.", b: "Se entiende el mensaje, pero el uso de muletillas (ehh, mmm) distrae.", r: "Se traba constantemente, omite sílabas o pronuncia de forma incorrecta." },
+        { t: "6. Recurso visual", e: "El recurso es excelente y ayuda a explicar conceptos complejos fácilmente.", mb: "El recurso es bueno y acompaña la presentación de forma pertinente.", b: "El recurso es meramente decorativo y no aporta peso a la explicación.", r: "El recurso no tiene relación con el tema o se le olvida utilizarlo." },
+        { t: "7. Síntesis oral", e: "Transmite la esencia del tema sin divagar en detalles innecesarios.", mb: "Logra resumir bien el tema central, aunque incluye algún detalle extra.", b: "Explica el tema, pero se detiene mucho en detalles ínfimos perdiendo el foco.", r: "Totalmente desordenado, no se logra entender la idea o hilo central." },
+        { t: "8. Vocabulario", e: "Uso impecable de términos literarios, técnicos y lenguaje formal.", mb: "Utiliza un lenguaje formal apropiado con algunos términos especializados.", b: "Lenguaje sencillo y correcto, sin tecnicismos ni enriquecimiento léxico.", r: "Uso de lenguaje coloquial, informal o totalmente ajeno al nivel académico." },
+        { t: "9. Manejo del tiempo", e: "Finaliza exactamente en el tiempo límite con un cierre contundente.", mb: "Termina unos pocos segundos antes o después, logrando un buen cierre.", b: "Se pasa por 1 minuto o termina mucho antes del tiempo establecido.", r: "Tiempo totalmente insuficiente o se extiende demasiado cortando la idea." },
+        { t: "10. Estructura", e: "Inicio claro (gancho), desarrollo lógico y conclusión firme y reflexiva.", mb: "Tiene inicio, desarrollo y cierre, pero una de las fases es débil.", b: "Salta la introducción o el cierre entrando directamente a los datos.", r: "No hay orden lógico, salta de un punto a otro sin ilación." }
+    ];
+
+    let votosGlobales = [];
+
+    const container = document.getElementById('rubrica');
+    items.forEach((item, i) => {
+        container.innerHTML += `
+            <div class="crit-row" id="fila-${i}">
+                <div class="crit-title">
+                    <span>${item.t}</span>
+                    <span class="crit-badge" id="badge-${i}">Sin calificar</span>
+                </div>
+                <div class="opts-container">
+                    <label class="opt-item" onclick="seleccionarOpcion(${i}, 4, this)">
+                        <input type="radio" name="r${i}" value="4">
+                        <div class="opt-level">Excelente (4 pts)</div>
+                        <div class="opt-desc">${item.e}</div>
+                    </label>
+                    <label class="opt-item" onclick="seleccionarOpcion(${i}, 3, this)">
+                        <input type="radio" name="r${i}" value="3">
+                        <div class="opt-level">Muy Bueno (3 pts)</div>
+                        <div class="opt-desc">${item.mb}</div>
+                    </label>
+                    <label class="opt-item" onclick="seleccionarOpcion(${i}, 2, this)">
+                        <input type="radio" name="r${i}" value="2">
+                        <div class="opt-level">Bueno (2 pts)</div>
+                        <div class="opt-desc">${item.b}</div>
+                    </label>
+                    <label class="opt-item" onclick="seleccionarOpcion(${i}, 1, this)">
+                        <input type="radio" name="r${i}" value="1">
+                        <div class="opt-level">Regular (1 pt)</div>
+                        <div class="opt-desc">${item.r}</div>
+                    </label>
+                </div>
+            </div>`;
+    });
+
+    function seleccionarOpcion(indexCriterio, valor, elementoLabel) {
+        const fila = document.getElementById(`fila-${indexCriterio}`);
+        fila.querySelectorAll('.opt-item').forEach(el => el.classList.remove('selected'));
+        elementoLabel.classList.add('selected');
+        elementoLabel.querySelector('input').checked = true;
+        
+        const badge = document.getElementById(`badge-${indexCriterio}`);
+        badge.textContent = `${valor} pts`;
+        badge.style.borderColor = 'var(--neon-green)';
+        badge.style.color = 'var(--neon-green)';
+        
+        actualizarBarraVivo();
+    }
+
+    function actualizarBarraVivo() {
+        const juez = document.getElementById('juez').value || "Juez sin seleccionar";
+        const estu = document.getElementById('estu').value || "Estudiante sin seleccionar";
+        
+        let pts = 0;
+        const seleccionados = document.querySelectorAll('input[type="radio"]:checked');
+        seleccionados.forEach(s => pts += parseInt(s.value));
+        const porcentaje = ((pts / 40) * 100).toFixed(1);
+
+        document.getElementById('info-evaluando').textContent = `${juez} ➔ ${estu}`;
+        document.getElementById('puntaje-vivo').textContent = `${pts} / 40 pts (${porcentaje}%) — ${seleccionados.length}/10 criterios`;
+    }
+
+    function cambiarPestana(id) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        if (id === 'evaluacion') {
+            document.getElementById('btn-tab-eval').classList.add('active');
+            document.getElementById('tab-evaluacion').classList.add('active');
+            document.getElementById('barra-vivo').style.display = 'flex';
+        } else {
+            document.getElementById('btn-tab-res').classList.add('active');
+            document.getElementById('tab-resultados').classList.add('active');
+            document.getElementById('barra-vivo').style.display = 'none';
+            sincronizarDesdeSheets();
+        }
+    }
+
+    function obtenerDatosFormulario() {
+        const juez = document.getElementById('juez').value;
+        const selectEstu = document.getElementById('estu');
+        const estudiante = selectEstu.value;
+        
+        if (!juez) { alert("Por favor seleccione su nombre en la lista de Jueces."); return null; }
+        if (!estudiante) { alert("Por favor seleccione al estudiante que está evaluando."); return null; }
+        
+        const nivel = selectEstu.options[selectEstu.selectedIndex].getAttribute('data-nivel');
+        const criterios = [];
+        let total = 0;
+
+        for (let i = 0; i < 10; i++) {
+            const marcado = document.querySelector(`input[name="r${i}"]:checked`);
+            if (!marcado) {
+                alert(`Falta calificar el criterio #${i + 1}: "${items[i].t}".`);
+                document.getElementById(`fila-${i}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return null;
+            }
+            const val = parseInt(marcado.value);
+            criterios.push(val);
+            total += val;
+        }
+
+        const nota100 = Number(((total / 40) * 100).toFixed(2));
+        return { juez, estudiante, nivel, criterios, total, nota100 };
+    }
+
+    async function procesarVoto() {
+        const datos = obtenerDatosFormulario();
+        if (!datos) return;
+
+        const btn = document.getElementById('btn-enviar');
+        const textoOriginal = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = "Guardando en Google Sheets...";
+
+        let locales = JSON.parse(localStorage.getItem('votos_oratoria_2026')) || [];
+        locales = locales.filter(v => !(v.juez === datos.juez && v.estudiante === datos.estudiante));
+        locales.push(datos);
+        localStorage.setItem('votos_oratoria_2026', JSON.stringify(locales));
+
+        if (SCRIPT_URL && SCRIPT_URL.startsWith("https://script.google.com")) {
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(datos)
+                });
+                alert(`¡Calificación registrada exitosamente en la nube!\n\nEstudiante: ${datos.estudiante}\nJuez: ${datos.juez}\nPuntaje: ${datos.total}/40 (${datos.nota100}%)`);
+            } catch (error) {
+                alert(`Se guardó una copia local en el dispositivo, pero hubo un detalle de red al conectar con Google Sheets. Verifique su conexión.`);
+            }
+        }
+
+        btn.disabled = false;
+        btn.textContent = textoOriginal;
+        limpiarRubrica();
+    }
+
+    function limpiarRubrica() {
+        document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+        document.querySelectorAll('.opt-item').forEach(el => el.classList.remove('selected'));
+        for (let i = 0; i < 10; i++) {
+            const badge = document.getElementById(`badge-${i}`);
+            badge.textContent = "Sin calificar";
+            badge.style.borderColor = "rgba(0, 229, 255, 0.25)";
+            badge.style.color = "var(--neon-cyan)";
+        }
+        document.getElementById('estu').value = "";
+        actualizarBarraVivo();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function sincronizarDesdeSheets() {
+        const estadoEl = document.getElementById('estado-conexion');
+        estadoEl.textContent = "Sincronizando votos desde Google Sheets...";
+        try {
+            const resp = await fetch(SCRIPT_URL + "?t=" + new Date().getTime());
+            const json = await resp.json();
+            if (json.status === 'ok') {
+                votosGlobales = json.data;
+                estadoEl.textContent = `Sincronizado con Google Sheets (${votosGlobales.length} votos registrados)`;
+                estadoEl.style.borderColor = "var(--neon-green)";
+                estadoEl.style.color = "var(--neon-green)";
+                renderizarTabla();
+            }
+        } catch (err) {
+            estadoEl.textContent = "Mostrando datos locales (Error al conectar con Sheets)";
+            votosGlobales = JSON.parse(localStorage.getItem('votos_oratoria_2026')) || [];
+            renderizarTabla();
+        }
+    }
+
+    function renderizarTabla() {
+        const tbody = document.getElementById('tabla-body');
+        const filtroNivel = document.getElementById('filtro-nivel').value;
+        
+        const agrupado = {};
+        votosGlobales.forEach(v => {
+            if (filtroNivel !== "Todos" && v.nivel !== filtroNivel) return;
+            if (!agrupado[v.estudiante]) {
+                agrupado[v.estudiante] = {
+                    estudiante: v.estudiante,
+                    nivel: v.nivel || "-",
+                    totalPuntos: 0,
+                    jueces: []
+                };
+            }
+            agrupado[v.estudiante].totalPuntos += Number(v.total);
+            agrupado[v.estudiante].jueces.push(`${v.juez.split(' ')[0]} (${v.total})`);
+        });
+
+        const ranking = Object.values(agrupado).map(item => {
+            const cant = item.jueces.length;
+            const maxPosible = cant * 40;
+            const promedio100 = ((item.totalPuntos / maxPosible) * 100).toFixed(2);
+            return { ...item, cant, maxPosible, promedio100: Number(promedio100) };
+        }).sort((a, b) => b.promedio100 - a.promedio100 || b.totalPuntos - a.totalPuntos);
+
+        if (ranking.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding: 30px; color: #9ec5db;'>Aún no hay calificaciones registradas para este filtro.</td></tr>";
+            return;
+        }
+
+        tbody.innerHTML = "";
+        ranking.forEach((est, idx) => {
+            const pos = idx + 1;
+            const claseRank = pos <= 3 ? `rank-${pos}` : '';
+            const etiquetasJueces = est.jueces.map(j => `<span class="judge-tag">${j}</span>`).join('');
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td><span class="rank-badge ${claseRank}">${pos}</span></td>
+                    <td style="font-weight: 600; color: #fff;">${est.estudiante}</td>
+                    <td>${est.nivel}</td>
+                    <td>
+                        <div style="margin-bottom:4px; font-weight:600; color:var(--neon-cyan);">${est.cant} / 5 jueces</div>
+                        <div>${etiquetasJueces}</div>
+                    </td>
+                    <td style="font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--neon-cyan); font-size: 1.05em;">
+                        ${est.totalPuntos} <span style="font-size:0.8em; color:#9ec5db;">/ ${est.maxPosible} pts</span>
+                    </td>
+                    <td style="font-family: 'Montserrat', sans-serif; font-weight: 800; color: var(--neon-green); font-size: 1.15em;">
+                        ${est.promedio100}%
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function exportarPDF() {
+        const datos = obtenerDatosFormulario();
+        if (!datos) return;
+        
+        const btnGroup = document.querySelector('.btn-group');
+        const tabsNav = document.querySelector('.tabs-nav');
+        btnGroup.style.display = 'none';
+        tabsNav.style.display = 'none';
+
+        const elemento = document.getElementById('panel-principal');
+        const resumen = document.createElement('div');
+        resumen.innerHTML = `
+            <div style="margin-top:25px; padding:20px; border:2px solid #00ff9d; border-radius:12px; text-align:center; font-family:'Montserrat',sans-serif;">
+                <h3 style="color:#00ff9d; margin:0 0 8px 0;">ACTA INDIVIDUAL DE CALIFICACIÓN</h3>
+                <p style="margin:4px 0; color:#fff;"><b>Juez:</b> ${datos.juez} | <b>Estudiante:</b> ${datos.estudiante}</p>
+                <p style="margin:4px 0; color:#00e5ff; font-size:1.3em; font-weight:800;">Puntaje Otorgado: ${datos.total} / 40 pts (${datos.nota100}%)</p>
+            </div>`;
+        elemento.appendChild(resumen);
+
+        html2pdf().set({
+            margin: 8,
+            filename: `Acta_Oratoria2026_${datos.estudiante.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, backgroundColor: '#08101a' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(elemento).save().then(() => {
+            btnGroup.style.display = 'flex';
+            tabsNav.style.display = 'flex';
+            elemento.removeChild(resumen);
+        });
+    }
+
+    setInterval(() => {
+        if (document.getElementById('tab-resultados').classList.contains('active')) {
+            sincronizarDesdeSheets();
+        }
+    }, 15000);
+</script>
+</body>
+</html>
